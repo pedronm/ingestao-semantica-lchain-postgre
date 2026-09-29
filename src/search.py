@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_postgres import PGEngine, PGVectorStore
 
 PROMPT_TEMPLATE = """
@@ -40,10 +41,30 @@ def search_prompt(question=None):
     CONNECTION_STRING = (f"postgresql+asyncpg://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}"
                          f"@{os.getenv("POSTGRES_URL")}/{os.getenv("POSTGRES_DB")}")
     load_dotenv()
-    engine = PGEngine.from_connection_string(CONNECTION_STRING)
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-    model = ChatOpenAI(temperature=0.7, model_name="gpt-4.1-mini")
+    isGemini = not os.getenv("OPEN_API_KEY") is None
+    isOpenAI = not os.getenv("GEMINI_API_KEY") is None
+
+    if isGemini and isOpenAI:
+        isGemini = False
+    if not isGemini and not isOpenAI:
+        print("Erro ao carregar as chaves de API")
+        print("Defina uma das variáveis, GEMINI ou OPENAI")
+        return
+
+    print(f"Chave gemini {isGemini if 'Ativada' else 'Desativada'},chave OpenAi {isOpenAI if 'Ativada' else 'Desativada'}")
+
+    engine = PGEngine.from_connection_string(CONNECTION_STRING)
+
+    if isOpenAI:
+        embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    elif isGemini:
+        embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001", output_dimensionality="1536" )
+
+    if isOpenAI:
+        model = ChatOpenAI(model_name="gpt-4.1-mini",temperature=0.7, max_retries=3,)
+    elif isGemini:
+        model = ChatGoogleGenerativeAI( model="gemini-3.1-pro-preview")
 
     store = PGVectorStore.create_sync(
         engine=engine,

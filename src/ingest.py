@@ -22,7 +22,7 @@ EMBBEDINGS=OpenAIEmbeddings(
 ENGINE = PGEngine.from_connection_string(CONNECTION_STRING)
 
 
-async def ingest_pdf():
+def ingest_pdf():
 
     create_table()
 
@@ -63,4 +63,4 @@ def create_table():
     )
 
 if __name__ == "__main__":
-    asyncio.run(ingest_pdf())
+    ingest_pdf()
