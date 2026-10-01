@@ -13,10 +13,10 @@ Esse é um projeto que extrai um documento em PDF para um banco RAG, e com isso 
 
 ### Variáveis de ambiente
 ( Todas as variáveis do Postgree, são encontradas no compose.yml)
-- PGVECTOR_URL:  HOST do conteiner; e.g.:localhost:5432
-- PGVECTOR_USER: -
-- PGVECTOR_PASSWORD: -
-- PGVECTOR_DB: -
+- POSTGRES_URL:  HOST do conteiner; e.g.:localhost:5432
+- POSTGRES_USER: -
+- POSTGRES_PASSWORD: -
+- POSTGRES_DB: -
 - TABLE_NAME: Fica a seu critério o nome da tabela, no meu caso foi "doc"
 - GEMINI_API_KEY : É necessário gerar uma chave da Gemini na plataform de API deles (https://aistudio.google.com/app/apikey)
 - OPEN_API_KEY: Mesmo da Gemini, só que para o OpenAI (https://platform.openai.com/login?next=%2Fapi-keys)
@@ -29,5 +29,7 @@ Esse é um projeto que extrai um documento em PDF para um banco RAG, e com isso 
 2.  Assim que a instância do PgVector estiver 100%, podemos construir o ambiente para execução do projeto:
    <br> <strong> 2.1 </strong> O projeto já possuí uma pasta "venv" com o ambiente virtual, caso esteja em um OS windows, usar o comando cmd: "<pasta do venv>\Scripts\activate.bat"; powershell:"<venv>\Scripts\Activate.ps1" . No linux, é "source venv/bin/activate"
    <br> <strong> 2.2 </strong> executar o comando "pip install -r requirements.txt" na raiz do projeto
-3.  Para executar o projeto:
+3. Para alimentar o nosso RAG com o documento pdf, executar o comando:
+   <br> <strong> 3.1 </strong> executar o comando python3 ./src/ingest.py na raiz do projeto. 
+4.  Para executar o projeto:
    <br> <strong> 3.1 </strong> executar o comando python3 ./src/chat.py na raiz do projeto. Assim que executar a aplicação vai solicitar uma entrad de texto, que no caso é a pergunta que será feita para a IA responder, junto com as informações do RAG
